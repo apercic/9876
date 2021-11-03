@@ -16,3 +16,8 @@ First run the server with 'java -jar demo-0.0.1-SNAPSHOT.jar'\
 Then open two terminals and run 'java -jar game-0.0.1-SNAPSHOT.jar' in both.\
 (this mimics the two players)
 
+
+![image](https://user-images.githubusercontent.com/37778988/140234725-8bd04959-8b15-4100-a659-c3dadfa43df1.png)
+
+
+
