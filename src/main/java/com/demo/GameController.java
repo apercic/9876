@@ -68,10 +68,13 @@ class GameController {
         GameEntity columnWin = checkColumnWin(game, mark, indexPlaced);
         if (columnWin != null) return columnWin;
 
-
         /* DIAGONAL1 */
-        /* DIAGONAL2 */
+        GameEntity diagonalFirstWin = checkDiagonalFirstWin(game, mark, indexPlaced);
+        if (diagonalFirstWin != null) return diagonalFirstWin;
 
+        /* DIAGONAL2 */
+        GameEntity diagonalSecondWin = checkDiagonalSecondWin(game, mark, indexPlaced);
+        if (diagonalSecondWin != null) return diagonalSecondWin;
 
         changeTurnToOtherPlayer(game);
         return repository.save(game);
@@ -110,11 +113,71 @@ class GameController {
     }
 
     /**
+     * Check if the left-right diagonal of indexPlaced has a winning match
+     * first we place the current index to the top-right corner
+     * then we check the diagonal
+     *
      * @param game        game entity
      * @param mark        X/Y the mark of the current player
      * @param indexPlaced the index of last placed mark
      * @return game if row is winning or null if not
-     * @return
+     */
+    public GameEntity checkDiagonalFirstWin(GameEntity game, Character mark, int indexPlaced) {
+        int count = 0;
+        int maxCount = 0;
+
+        int current = indexPlaced;
+        while (current - columns + 1 > 0 && (current - columns + 1) / columns == current / columns - 1)
+            current = current - columns + 1;
+
+        while ((current + columns - 1) / columns == current / columns + 1 && current < rows * columns) {
+            if (game.getState().charAt(current) == mark) count++;
+            else {
+                if (count > maxCount) maxCount = count;
+                count = 0;
+            }
+            current = current + columns - 1;
+        }
+        return checkCountForWin(game, Math.max(count, maxCount));
+    }
+
+    /**
+     * Check if the right-left diagonal of indexPlaced has a winning match
+     * first we place the current index to the top-left corner
+     * then we check the diagonal
+     *
+     * @param game        game entity
+     * @param mark        X/Y the mark of the current player
+     * @param indexPlaced the index of last placed mark
+     * @return game if row is winning or null if not
+     */
+    public GameEntity checkDiagonalSecondWin(GameEntity game, Character mark, int indexPlaced) {
+        int count = 0;
+        int maxCount = 0;
+
+        int current = indexPlaced;
+        while (current - columns - 1 > 0 && (current - columns - 1) / columns == current / columns - 1)
+            current = current - columns - 1;
+
+        while ((current + columns + 1) / columns == current / columns + 1 && current < rows * columns) {
+            if (game.getState().charAt(current) == mark) count++;
+            else {
+                if (count > maxCount) maxCount = count;
+                count = 0;
+            }
+            current = current + columns + 1;
+        }
+        return checkCountForWin(game, Math.max(count, maxCount));
+    }
+
+    /**
+     * Check if the column of indexPlaced has a winning match
+     *
+     * @param game        game entity
+     * @param mark        X/Y the mark of the current player
+     * @param indexPlaced the index of last placed mark
+     * @return game if row is winning or null if not
+     * @return game if row is winning or null if not
      */
     public GameEntity checkColumnWin(GameEntity game, Character mark, int indexPlaced) {
         int count = 0;
@@ -122,18 +185,18 @@ class GameController {
 
         int topMostIndex = indexPlaced % columns;
         for (int i = 0; i < rows; i++) {
-            if (game.getState().charAt(topMostIndex + i * columns) == mark)
-                count++;
+            if (game.getState().charAt(topMostIndex + i * columns) == mark) count++;
             else {
                 if (count > maxCount) maxCount = count;
                 count = 0;
             }
         }
-
         return checkCountForWin(game, Math.max(count, maxCount));
     }
 
     /**
+     * Check if the row of indexPlaced has a winning match
+     *
      * @param game        game entity
      * @param mark        X/Y the mark of the current player
      * @param indexPlaced the index of last placed mark
@@ -150,7 +213,6 @@ class GameController {
                 count = 0;
             }
         }
-
         return checkCountForWin(game, Math.max(count, maxCount));
     }
 

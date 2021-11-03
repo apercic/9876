@@ -15,7 +15,6 @@ class LoadDatabase {
     CommandLineRunner initDatabase(GameRepository repository) {
 
         return args -> {
-//            log.info("Preloading " + repository.save(new GameEntity(1L, new byte[25], "player1", false, null, null)));
         };
     }
 }

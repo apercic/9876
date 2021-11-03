@@ -68,4 +68,44 @@ class DemoApplicationTests {
 
         assertNotEquals(gameEntity, null);
     }
+
+    @Test
+    void testCheckDiagonalFirstWin() {
+        GameController gameController = new GameController(repository);
+        GameEntity game = new GameEntity();
+        StringBuilder gameState = new StringBuilder("_".repeat(54));
+        gameState.replace(16, 17, "X");
+        gameState.replace(24, 25, "X");
+        gameState.replace(32, 33, "X");
+        gameState.replace(40, 41, "X");
+        gameState.replace(48, 49, "X");
+
+        game.setState(gameState.toString());
+        game.setWin(true);
+
+        when(repository.save(game)).thenReturn(new GameEntity());
+        GameEntity gameEntity = gameController.checkDiagonalFirstWin(game, 'X', 32);
+
+        assertNotEquals(gameEntity, null);
+    }
+
+    @Test
+    void testCheckDiagonalSecondWin() {
+        GameController gameController = new GameController(repository);
+        GameEntity game = new GameEntity();
+        StringBuilder gameState = new StringBuilder("_".repeat(54));
+        gameState.replace(12, 13, "X");
+        gameState.replace(22, 23, "X");
+        gameState.replace(32, 33, "X");
+        gameState.replace(42, 43, "X");
+        gameState.replace(52, 53, "X");
+
+        game.setState(gameState.toString());
+        game.setWin(true);
+
+        when(repository.save(game)).thenReturn(new GameEntity());
+        GameEntity gameEntity = gameController.checkDiagonalSecondWin(game, 'X', 32);
+
+        assertNotEquals(gameEntity, null);
+    }
 }
