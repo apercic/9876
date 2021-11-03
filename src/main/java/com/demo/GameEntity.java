@@ -17,9 +17,11 @@ class GameEntity {
     private @Id
     @GeneratedValue
     Long id;
-    private byte[] state = new byte[25];
+    private String state = "_".repeat(25);
     private String turn;
-    private Boolean win;
+
+    private boolean win;
+    private boolean over;
 
     private String player1;
     private String player2;

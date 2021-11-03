@@ -20,6 +20,7 @@ class GameController {
         if (gameWithOneParticipant == null) {
             GameEntity newGame = new GameEntity();
             newGame.setPlayer1(userName);
+            newGame.setTurn(userName);
             return repository.save(newGame);
         } else {
             gameWithOneParticipant.setPlayer2(userName);
@@ -27,18 +28,9 @@ class GameController {
         }
     }
 
-    @GetMapping("/game/{id}/{playerName}")
-    static GameEntity getGame(@PathVariable Long id, @PathVariable String playerName) {
-        GameEntity game = repository.findById(id).orElseThrow(() -> new GameNotFoundException(id));
-        if (game != null) {
-            if (game.getPlayer1() == null)
-                game.setPlayer1(playerName);
-            else
-                game.setPlayer2(playerName);
-
-            return repository.save(game);
-        }
-        return null;
+    @GetMapping("/game/{id}")
+    GameEntity getGame(@PathVariable Long id) {
+        return repository.findById(id).orElseThrow(() -> new GameNotFoundException(id));
     }
 
     /**
@@ -47,8 +39,8 @@ class GameController {
      * @param mark     - (X/Y) - the mark of the current player
      * @return
      */
-    @PutMapping("/game/{id}/{position}")
-    GameEntity updateGame(@PathVariable Long id, @PathVariable Integer position, @PathVariable Byte mark) {
+    @PostMapping("/game/{id}/{position}/{mark}")
+    GameEntity updateGame(@PathVariable Long id, @PathVariable Integer position, @PathVariable Character mark) {
         //position runs from [0 - (n-1)]
         GameEntity game = repository.findById(id).orElse(null);
         if (game != null) {
@@ -59,8 +51,10 @@ class GameController {
             boolean placed = false;
             int indexPlaced = -1;
             for (int i = n - 1; i >= 0; i--) {
-                if (game.getState()[position + n * i] == 0) {
-                    game.getState()[position + n * i] = mark;
+                if (game.getState().charAt(position + n * i) == '_') {
+                    StringBuilder temp = new StringBuilder(game.getState());
+                    temp.replace(position + n * i, position + n * i + 1, mark.toString());
+                    game.setState(temp.toString());
                     placed = true;
                     indexPlaced = position + n * i;
                     break;
@@ -68,14 +62,15 @@ class GameController {
             }
             if (!placed) return null; //if we could not place mark in position column
 
-            if (game.getTurn().equals("player1")) game.setTurn("player2");
-            else game.setTurn("player1");
+            //change turn to other player
+            if (game.getTurn().equals(game.getPlayer1())) game.setTurn(game.getPlayer2());
+            else game.setTurn(game.getPlayer1());
 
 
             //ROW
             int count = 0;
             for (int i = 0; i < n; i++) {
-                if (game.getState()[position + n * i] == mark) count++;
+                if (game.getState().charAt(position + n * i) == mark) count++;
                 else count = 0; //if they are in same row but not together
             }
 
@@ -88,7 +83,7 @@ class GameController {
             count = 0;
             int leftMostIndex = indexPlaced - (indexPlaced % n);
             for (int i = leftMostIndex; i < leftMostIndex + n; i++) {
-                if (game.getState()[i] == mark) count++;
+                if (game.getState().charAt(i) == mark) count++;
                 else count = 0;
             }
             if (count >= winLine) {
