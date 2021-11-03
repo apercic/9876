@@ -17,7 +17,7 @@ class GameEntity {
     private @Id
     @GeneratedValue
     Long id;
-    private String state = "_".repeat(25);
+    private String state = "_".repeat(54);
     private String turn;
 
     private boolean win;
