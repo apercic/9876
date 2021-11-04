@@ -12,7 +12,11 @@ Pull the code with git clone and run 'mvn clean install' in both directories.
 The jar for the server is in directory: \9876\target\demo-0.0.1-SNAPSHOT.jar\
 The jar for the client is in directory: \6789\target\game-0.0.1-SNAPSHOT.jar\
 
-First run the server with 'java -jar demo-0.0.1-SNAPSHOT.jar'\
+First run the server with 'java -jar demo-0.0.1-SNAPSHOT.jar'
+
+![image](https://user-images.githubusercontent.com/37778988/140235562-35d5ec1e-bafb-4d96-88ab-fb592af5c6b4.png)
+
+
 Then open two terminals and run 'java -jar game-0.0.1-SNAPSHOT.jar' in both.\
 (this mimics the two players)
 
